@@ -7,13 +7,12 @@ public class lsd {
 	
 	private static final int SIZE = (int) 1e6;
 
-	//private static final int SIZE_OF_INT = Integer.SIZE;
-	private static final int SIZE_OF_INT = 10;
-	
+	private static final int CAPACITY = 0xff + 1;
+	private static final int SIZE_OF_INT = Integer.SIZE / 4;
+
 	private static Random random = new Random();
 	
 	public static void main(String[] args) {
-		
 		int[] data = generate();
 		int[] data2 = data.clone();
 		
@@ -37,16 +36,16 @@ public class lsd {
 		System.out.println("Elapsed = " + lsdTime);
 		
 		System.out.println(Arrays.equals(data, data2));
-		System.out.println("Ratio = " + (double)lsdTime / (double)quickTime);
+		System.out.println("Ratio = " + (double)quickTime / (double)lsdTime);
 	}
 
 	private static void LSDsort(int[] data) {
 		int[] newData = new int[data.length];
-		int k = 10;
-		int[] counter = new int[k];
+		
+		int[] counter = new int[CAPACITY];
 		
 		for (int i = 0; i < SIZE_OF_INT; i++) {
-			for (int j = 0; j < k; j++) {
+			for (int j = 0; j < CAPACITY; j++) {
 				counter[j] = 0;
 			}
 			for (int j = 0; j < data.length; j++) {
@@ -54,7 +53,7 @@ public class lsd {
 				counter[d]++;
 			}
 			int count = 0;
-			for (int j = 0; j < k; j++) {
+			for (int j = 0; j < CAPACITY; j++) {
 				int temp = counter[j];
 				counter[j] = count;
 				count += temp;
@@ -72,7 +71,7 @@ public class lsd {
 	}
 
 	private static int digit(int number, int k) {
-		return (int)((number / Math.pow(10, k)) % 10);
+		return (number >> 8*k) & 0xff;
 	}
 
 	private static int[] generate() {
